@@ -2,8 +2,10 @@ const chessOpeningModel = require("../models/chessOpenings");
 
 
 module.exports.getOpenings = async (req,res)=>{
+    const page = req.query.page || 0;
+    const limit = req.query.limit || 3;
     try {
-        const allOpenings = await chessOpeningModel.find({});
+        const allOpenings = await chessOpeningModel.find({}).skip(page * limit).limit(limit);
         res.status(200).json({
             message : "Successfully retreived all openings",
             data : allOpenings

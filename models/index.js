@@ -7,4 +7,5 @@ module.exports.connectToDB = ()=>{
     mongoose.connect(MONGO_DB_CONNECTION);
     mongoose.connection.on("connected", ()=> console.log("Connected to DB successfully"));
     mongoose.connection.on("error", (err)=> console.log(err));
+    mongoose.connection.on("disconnected", ()=> console.log("MongoDB disconnected"));
 };
