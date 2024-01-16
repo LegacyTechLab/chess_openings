@@ -2,10 +2,11 @@ const chessOpeningModel = require("../models/chessOpenings");
 
 
 module.exports.getOpenings = async (req,res)=>{
-    const page = req.query.page || 0;
+    const page = req.query.page || 1;
     const limit = req.query.limit || 3;
+    const skip = (page-1) * limit;
     try {
-        const allOpenings = await chessOpeningModel.find({}).skip(page * limit).limit(limit);
+        const allOpenings = await chessOpeningModel.find({}).sort({name : 1}).skip(skip).limit(limit);
         res.status(200).json({
             message : "Successfully retreived all openings",
             data : allOpenings
@@ -40,12 +41,12 @@ module.exports.getOpening = async (req,res)=>{
 };
 
 module.exports.createOpening = async (req,res)=>{
-    const body = req.body;
+    const {name, type, moves} = req.body;
     try {
        let newOpening = await new chessOpeningModel({
-            name : body.name,
-            type : body.type,
-            moves :body.moves,
+            name,
+            type,
+            moves,
             updatedAt : new Date(),
             createdAt : new Date()
         }).save();
@@ -65,7 +66,6 @@ module.exports.createOpening = async (req,res)=>{
 module.exports.updateOpening = async (req,res)=>{
     let id = req.params.id;
     let book = req.body;
-    book.updatedAt = new Date();
     try {
         let opening = await chessOpeningModel.findById(id);
         if (!opening){
@@ -73,6 +73,7 @@ module.exports.updateOpening = async (req,res)=>{
                 message : "ID does not exist"
             });
         }
+        book.updatedAt = new Date();
         let updatedOpening = await chessOpeningModel.findByIdAndUpdate(id, book, {new : true});
         res.status(200).json({
             message : "Opening Updated successfully",

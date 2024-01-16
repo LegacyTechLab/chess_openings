@@ -5,7 +5,7 @@ const chessOpeningSchema = new mongoose.Schema({
         type : String,
         required : true,
         unique : true,
-        lowercase : true,
+        lowercase : true
     },
     type : {
         type : String,
